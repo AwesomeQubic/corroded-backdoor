@@ -1,0 +1,14 @@
+[package]
+name = "cb0"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+linux-syscall = "1.2.0"
+
+
+[profile.release]
+panic="abort"
+
+[profile.dev]
+panic="abort"
