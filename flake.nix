@@ -51,6 +51,7 @@
             pkgs.llvmPackages.bintools
             pkgs.cargo-show-asm
             pkgs.cargo-binutils
+            pkgs.cargo-bloat
             # pkgs.ripgrep
           ];
         };

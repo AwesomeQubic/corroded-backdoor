@@ -1,3 +1,6 @@
 /target
+/target-cb1
+/target-cb0
 result*
 .direnv
+/private.pem

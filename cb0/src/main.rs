@@ -7,7 +7,6 @@ use linux_syscall::{SYS_write, syscall};
 
 pub mod sys;
 pub mod garbage;
-pub mod grain;
 pub mod payload;
 
 unsafe extern "C" {
@@ -33,11 +32,11 @@ pub extern "C" fn _entry() {
         "syscall",
 
         "mov rdi, r10",
-        "call {start}",
+        "jmp {start}",
 
         "1: ret",
         //TODO make it better
-        range = const 4096,
+        range = const 4096 * 22,
         mask = const u64::MAX << 12,
         prot = const sys::PROT_EXECUTE | sys::PROT_WRITE,
         start = sym _start,
@@ -51,17 +50,9 @@ pub extern "C" fn _start(load_location: usize) {
     if LATCH.compare_exchange(false, true, core::sync::atomic::Ordering::Relaxed, core::sync::atomic::Ordering::Relaxed).is_err() {
         return;
     }
-    
-    garbage::_dummy();
-    let stdout: i32 = 1;
-    let hello = "Hello, world!\n\0";
-    garbage::_dummy();
-
-    let rc = unsafe {
-	    syscall!(SYS_write, stdout, hello.as_ptr(), hello.len())
-    };
 
     garbage::_dummy();
+    self::payload::run();
 }
 
 #[panic_handler]
