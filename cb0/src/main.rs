@@ -49,7 +49,7 @@ static LATCH: AtomicBool = AtomicBool::new(false);
 
 pub extern "C" fn _start(load_location: usize) {
     let start = unsafe { _rdtsc() };
-    if LATCH.compare_exchange(false, true, core::sync::atomic::Ordering::Relaxed, core::sync::atomic::Ordering::Relaxed).is_err() {
+    if LATCH.compare_exchange(false, true, core::sync::atomic::Ordering::AcqRel, core::sync::atomic::Ordering::Relaxed).is_err() {
         return;
     }
     black_box(garbage::_dummy());
