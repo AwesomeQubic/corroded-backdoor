@@ -1,0 +1,18 @@
+cargo-features = ["panic-immediate-abort"]
+
+[package]
+name = "cb1s"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[profile.release]
+panic="immediate-abort"
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+panic="abort"

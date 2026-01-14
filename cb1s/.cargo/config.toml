@@ -1,0 +1,9 @@
+[build]
+target = "x86_64-unknown-linux-none"
+
+[unstable]
+build-std = ["core", "alloc" ]
+panic-immediate-abort = true
+
+[profile.release]
+panic = "immediate-abort"

