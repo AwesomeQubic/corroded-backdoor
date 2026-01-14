@@ -1,6 +1,5 @@
 #![no_main]
 #![no_std]
-#![feature(abi_custom)]
 
 use core::{arch::{naked_asm, x86_64::_rdtsc}, hint::black_box, panic::PanicInfo, sync::atomic::AtomicBool};
 
@@ -16,7 +15,7 @@ unsafe extern "C" {
 
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
-pub unsafe extern "custom" fn _entry() {
+pub unsafe extern "C" fn _entry() {
     naked_asm!(
         "lea r10, [rip]",
 
